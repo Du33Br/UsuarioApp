@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { RouterModule, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule, NzLayoutModule],
+  imports: [CommonModule, NzLayoutModule, RouterModule, RouterOutlet],
   template: `
     <nz-content style="padding:16px">
       <div class="main-content">
-        <h1>Bem-vindo</h1>
-        <p>Área principal do aplicativo. Substitua por suas rotas ou componentes.</p>
+        <router-outlet></router-outlet>
       </div>
     </nz-content>
   `,

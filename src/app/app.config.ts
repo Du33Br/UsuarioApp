@@ -5,6 +5,15 @@ import { routes } from './app.routes';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+import { NZ_ICONS } from 'ng-zorro-antd/icon';
+import {
+  HomeOutline,
+  SettingOutline,
+  BellOutline,
+  LogoutOutline,
+  MenuFoldOutline,
+  UserOutline
+} from '@ant-design/icons-angular/icons';
 
 registerLocaleData(en);
 
@@ -13,6 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     importProvidersFrom(BrowserAnimationsModule),
-    { provide: NZ_I18N, useValue: en_US }
+    { provide: NZ_I18N, useValue: en_US },
+    { provide: NZ_ICONS, useValue: [HomeOutline, SettingOutline, BellOutline, LogoutOutline, MenuFoldOutline, UserOutline] }
   ]
 };
