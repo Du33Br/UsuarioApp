@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* NG-ZORRO theme */
+@import "../node_modules/ng-zorro-antd/ng-zorro-antd.min.css";
+
+/* Primary color variable for custom overrides */
+:root {
+	--primary-color: #3f51b5;
+}
+
+/* Toolbar title color */
+.title {
+	color: var(--primary-color);
+}
