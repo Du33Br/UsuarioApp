@@ -1,0 +1,7 @@
+{
+  "/api/Login/auth": "/Login",
+  "/api/Login": "/Login",
+  "/api/Login/:id": "/Login/:id",
+  "/api/Login/user/:user": "/Login?user=:user",
+  "/api/Login/unidade/:idUnidade": "/Login?idUnidade=:idUnidade"
+}
