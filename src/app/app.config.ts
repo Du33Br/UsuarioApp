@@ -6,7 +6,8 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import {
   HomeOutline,
   SettingOutline,
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     importProvidersFrom(BrowserAnimationsModule, HttpClientModule),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: NZ_I18N, useValue: en_US },
     { provide: NZ_ICONS, useValue: [HomeOutline, SettingOutline, BellOutline, LogoutOutline, MenuFoldOutline, UserOutline] }
   ]
