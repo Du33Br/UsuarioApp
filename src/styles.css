@@ -69,14 +69,22 @@
 .ant-layout-sider {
 	position: relative;
 	min-width: 0;
-	background: linear-gradient(180deg, var(--primary-color), var(--primary-light)) !important;
+    /* remove background to allow transparent or parent-controlled backgrounds */
+    background: none !important;
 	transition: all .2s ease !important;
 	border-right: 1px solid rgba(255,255,255,0.06) !important;
 	color: #fff;
 }
 
 .ant-layout-sider.ant-layout-sider-collapsed {
-	background: linear-gradient(180deg, var(--primary-color), rgba(21,101,192,0.9)) !important;
+    background: none !important;
+}
+
+/* Fix for sider children spacing when using custom header/logo sizes */
+.ant-layout-sider-children {
+	height: 100%;
+	margin-top: -22.1px;
+	padding-top: .1px;
 }
 
 /* Table responsive tweaks and action spacing */
@@ -137,4 +145,11 @@
 
 .ant-card {
 	border-radius: 8px;
+}
+
+/* Ensure tags have a minimum width and are center-aligned */
+.ant-tag {
+
+	min-width: 62px;
+	text-align: center;
 }

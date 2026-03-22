@@ -9,7 +9,8 @@ export const routes: Routes = [
 			{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 			{ path: 'dashboard', loadComponent: () => import('./dashboard.component').then(m => m.DashboardComponent) },
 			{ path: 'form', loadComponent: () => import('./sample-form.component').then(m => m.SampleFormComponent) },
-			{ path: 'users', loadComponent: () => import('./users-table.component').then(m => m.UsersTableComponent) }
+			{ path: 'users', loadComponent: () => import('./users-table.component').then(m => m.UsersTableComponent) },
+			{ path: 'clients', loadComponent: () => import('./clients/clients.component').then(m => m.ClientsComponent) }
 		]
 	},
 	{ path: '**', redirectTo: '' }

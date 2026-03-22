@@ -6,6 +6,7 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
+import { HttpClientModule } from '@angular/common/http';
 import {
   HomeOutline,
   SettingOutline,
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    importProvidersFrom(BrowserAnimationsModule),
+    importProvidersFrom(BrowserAnimationsModule, HttpClientModule),
     { provide: NZ_I18N, useValue: en_US },
     { provide: NZ_ICONS, useValue: [HomeOutline, SettingOutline, BellOutline, LogoutOutline, MenuFoldOutline, UserOutline] }
   ]
