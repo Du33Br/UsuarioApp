@@ -1,0 +1,51 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Bem-vindo</h1>
+    <p>Acesse sua conta</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <div class="form-group">
+        <label for="username">Login</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="Digite seu login"
+          [disabled]="isLoading"
+          class="form-input"
+        />
+        <span class="error" *ngIf="getError('username')">
+          {{ getError('username') }}
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Digite sua senha"
+          [disabled]="isLoading"
+          class="form-input"
+        />
+        <span class="error" *ngIf="getError('password')">
+          {{ getError('password') }}
+        </span>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="button-group">
+        <button type="button" (click)="limpar()" [disabled]="isLoading" class="btn-secondary">
+          Limpar
+        </button>
+        <button type="submit" [disabled]="isLoading || loginForm.invalid" class="btn-primary">
+          {{ isLoading ? 'Autenticando...' : 'Entrar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,79 +1,62 @@
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpErrorResponse } from '@angular/common/http';
+import { Observable, EMPTY, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  // Usuários mock - mesmo do db.json
-  private users = [
-    { id: 1, user: 'admin', password: '123456', status: 'active', idUnidade: 1 },
-    { id: 2, user: 'usuario', password: 'senha123', status: 'active', idUnidade: 2 }
+  // Rotas públicas que não precisam de autenticação
+  private readonly PUBLIC_URLS = [
+    '/api/Login/auth',
+    '/api/Login/register',
+    '/api/health',
+    'viacep.com.br'
   ];
 
+  constructor(private auth: AuthService, private router: Router) {}
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Interceptar requisição de autenticação
-    if (req.url.includes('/api/Login/auth') && req.method === 'POST') {
-      return this.handleAuthRequest(req);
+    // Permitir rotas públicas sem token
+    if (this.isPublicUrl(req.url)) {
+      return next.handle(req);
     }
 
-    // Deixar outras requisições passarem normalmente
-    return next.handle(req);
-  }
+    const token = this.auth.obterToken();
 
-  private handleAuthRequest(req: HttpRequest<any>): Observable<HttpEvent<any>> {
-    const { user, password } = req.body;
+    // Sem token: em dev permite continuar sem header; em prod redireciona para login
+    if (!token) {
+      if (!environment.production && environment.allowUnauthenticatedRequestsInDev) {
+        return next.handle(req);
+      }
+      this.auth.logout();
+      this.router.navigate(['/login']);
+      return EMPTY;
+    }
 
-    console.log('🔐 Tentativa de login:', { user });
-    console.log('📋 Usuários disponíveis:', this.users);
+    // Token presente: sempre incluir no header e deixar o servidor validar
+    const authReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
-    // Validar credenciais
-    const foundUser = this.users.find(u => u.user === user && u.password === password);
-
-    if (foundUser) {
-      console.log('✅ Login bem-sucedido para usuário:', user);
-      
-      // Login bem-sucedido
-      const response = {
-        token: this.generateToken(foundUser),
-        usuario: {
-          id: foundUser.id,
-          user: foundUser.user,
-          status: foundUser.status,
-          idUnidade: foundUser.idUnidade
+    return next.handle(authReq).pipe(
+      catchError((err: HttpErrorResponse) => {
+        // Token rejeitado pelo servidor: limpar sessão e redirecionar
+        if (err.status === 401 || err.status === 403) {
+          this.auth.logout();
+          this.router.navigate(['/login']);
+          return EMPTY;
         }
-      };
-
-      return of(new HttpResponse({
-        status: 200,
-        body: response
-      }));
-    } else {
-      console.log('❌ Login falhou - credenciais inválidas para:', user);
-      
-      // Login falhou - lançar erro
-      const error = new HttpErrorResponse({
-        error: { message: 'Usuário ou senha inválidos' },
-        status: 401,
-        statusText: 'Unauthorized',
-        url: req.url
-      });
-
-      return throwError(() => error);
-    }
+        return throwError(() => err);
+      })
+    );
   }
 
-  private generateToken(user: any): string {
-    // Gerar um JWT mock (não é um JWT real, apenas para demo)
-    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-    const payload = btoa(JSON.stringify({
-      sub: user.id,
-      user: user.user,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // expires in 24h
-    }));
-    const signature = btoa('mock-signature');
-
-    return `${header}.${payload}.${signature}`;
+  private isPublicUrl(url: string): boolean {
+    return this.PUBLIC_URLS.some(publicUrl => url.includes(publicUrl));
   }
 }
-

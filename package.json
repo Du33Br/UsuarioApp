@@ -12,6 +12,7 @@
     "lint": "ng lint",
     "format": "prettier --write \"src/**/*.{ts,html,css,json}\"",
     "serve:dist": "http-server dist/usuario-web -p 4200"
+    
   },
   "private": true,
   "dependencies": {

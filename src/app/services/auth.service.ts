@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, switchMap, catchError } from 'rxjs/operators';
 import { LoginService, LoginAuthRequest, LoginAuthResponse } from './login.service';
+import { UnidadeService } from './unidade.service';
+import { Unidade } from './unidade.service';
 
 export interface Usuario {
   id?: number;
@@ -21,7 +23,7 @@ export class AuthService {
   private autenticadoSubject: BehaviorSubject<boolean>;
   public autenticado$: Observable<boolean>;
 
-  constructor(private loginService: LoginService) {
+  constructor(private loginService: LoginService, private unidadeService: UnidadeService) {
     const usuarioSalvo = this.obterUsuarioLocalStorage();
     this.usuarioSubject = new BehaviorSubject<Usuario | null>(usuarioSalvo);
     this.usuario$ = this.usuarioSubject.asObservable();
@@ -36,30 +38,106 @@ export class AuthService {
    */
   autenticar(user: string, password: string): Observable<LoginAuthResponse> {
     const credentials: LoginAuthRequest = { user, password };
-    
+
     return this.loginService.autenticar(credentials).pipe(
-      map(response => {
-        // Armazenar token
+      switchMap(response => {
+        // Armazenar token se presente
         if (response.token) {
           this.armazenarToken(response.token);
         }
 
-        // Armazenar dados do usuário
+        // Se backend retornou usuário, garantir que possua nome da unidade
         if (response.usuario) {
+          // normalizar campos: backend pode retornar PascalCase (Id, User, IdUnidade)
+          const raw = response.usuario;
           const usuario: Usuario = {
-            user: response.usuario.user || user,
-            ...response.usuario
+            ...raw,
+            id:        raw.id        ?? raw.Id        ?? undefined,
+            user:      raw.user      || raw.User      || user,
+            idUnidade: raw.idUnidade ?? raw.IdUnidade ?? raw.id_unidade ?? undefined,
+            status:    raw.status    ?? raw.Status    ?? undefined,
           };
+          // debug removed
+
+          const idUnidade = usuario.idUnidade as number | undefined;
+          const hasUnidadeName = !!(response.usuario.unidade || response.usuario.unidadeName || response.usuario.nomeUnidade);
+
+          if (idUnidade && !hasUnidadeName) {
+            // buscar unidade e anexar nome antes de persistir
+            return this.unidadeService.obterPorId(idUnidade).pipe(
+              map(un => {
+                try {
+                  (usuario as any).unidade = (un as any).nome || (usuario as any).unidade || '';
+                } catch {
+                  (usuario as any).unidade = (usuario as any).unidade || '';
+                }
+                this.armazenarUsuario(usuario);
+                this.usuarioSubject.next(usuario);
+                this.autenticadoSubject.next(true);
+                return response;
+              }),
+              catchError(() => {
+                // se falhar ao buscar unidade, persistir usuário mesmo assim
+                this.armazenarUsuario(usuario);
+                this.usuarioSubject.next(usuario);
+                this.autenticadoSubject.next(true);
+                return of(response);
+              })
+            );
+          }
+
+          // sem necessidade de buscar unidade
           this.armazenarUsuario(usuario);
           this.usuarioSubject.next(usuario);
-        } else {
-          this.usuarioSubject.next({ user });
+          this.autenticadoSubject.next(true);
+          return of(response);
         }
 
+        // sem usuário retornado
+        this.usuarioSubject.next({ user });
         this.autenticadoSubject.next(true);
-        return response;
+        return of(response);
       })
     );
+  }
+
+  /**
+   * Cria uma `Unidade` simples (apenas nome) e associa ao usuário autenticado.
+   * Retorna o `Unidade` criado e atualiza o usuário em localStorage.
+   */
+  associarUnidade(nome: string) {
+    const atual = this.obterUsuario();
+    if (!atual || !atual.id) {
+      throw new Error('Usuário não autenticado ou sem id');
+    }
+
+    const payload: Unidade = { nome, observacoes: '', textoCarteirinha: '' };
+    return this.unidadeService.criar(payload).pipe(
+      switchMap(un => {
+        // atualizar login via LoginService (preservar outros campos)
+        const updatePayload: any = { idUnidade: un.id, unidade: un.nome };
+        return this.loginService.atualizar((atual as any).id, updatePayload).pipe(
+          map(updated => {
+            // ajustar usuário local e emitir
+            const novoUsuario = { ...(atual as any), idUnidade: un.id, unidade: un.nome };
+            this.armazenarUsuario(novoUsuario as any);
+            this.usuarioSubject.next(novoUsuario as any);
+            return { unidade: un, usuario: updated };
+          })
+        );
+      })
+    );
+  }
+
+  /**
+   * Atualiza os dados do usuário autenticado em memória e no localStorage.
+   */
+  atualizarUsuarioLocal(parcial: Partial<Usuario>): void {
+    const atual = this.obterUsuario();
+    if (!atual) return;
+    const atualizado = { ...atual, ...parcial } as Usuario;
+    this.armazenarUsuario(atualizado);
+    this.usuarioSubject.next(atualizado);
   }
 
   /**

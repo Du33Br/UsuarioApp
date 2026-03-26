@@ -1,0 +1,6 @@
+.login-form-root { max-width: 480px; margin: 40px auto; padding: 0 16px; }
+.login-card { }
+.full-width { width: 100%; }
+.muted { color: #999; font-weight: 400; font-size: 12px; }
+.error-msg { color: #f5222d; margin-bottom: 12px; }
+.actions { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }

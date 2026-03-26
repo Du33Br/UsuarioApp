@@ -5,10 +5,24 @@ import { Observable } from 'rxjs';
 export interface Unidade {
   id?: number;
   nome: string;
+  apelido?: string;
   cnpj?: string;
-  endereco?: string;
+  dre?: string;
+  email?: string;
   telefone?: string;
+  cep?: string;
+  logradouro?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
+  cidade?: string;
+  uf?: string;
+  endereco?: string;
   status?: string;
+  /** Obrigatório pela API */
+  observacoes: string;
+  /** Obrigatório pela API */
+  textoCarteirinha: string;
 }
 
 @Injectable({ providedIn: 'root' })

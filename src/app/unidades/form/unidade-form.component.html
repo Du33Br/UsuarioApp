@@ -1,0 +1,141 @@
+<nz-card>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h2 style="margin:0">{{ readonly ? 'Visualizar Unidade' : (id ? 'Editar Unidade' : 'Cadastrar Unidade') }}</h2>
+  </div>
+
+  <nz-spin [nzSpinning]="loading">
+    <form (ngSubmit)="salvar()" class="unidade-form">
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">Nome <span class="req">*</span></nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <div class="grid-pair">
+            <input nz-input name="nome" [(ngModel)]="unidade.nome"
+                   [attr.disabled]="readonly ? true : null"
+                   placeholder="Nome da unidade" class="half" required />
+            <input nz-input name="apelido" [(ngModel)]="unidade.apelido"
+                   [attr.disabled]="readonly ? true : null"
+                   placeholder="Apelido" class="half" />
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">CNPJ / DRE / Telefone</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <div class="grid-pair">
+            <input nz-input name="cnpj"
+                   [ngModel]="unidade.cnpj" (ngModelChange)="onCnpjChange($event)"
+                   [attr.disabled]="readonly ? true : null"
+                   placeholder="XX.XXX.XXX/XXXX-XX" class="small" maxlength="18" />
+            <input nz-input name="dre" [(ngModel)]="unidade.dre"
+                   [attr.disabled]="readonly ? true : null"
+                   placeholder="DRE" class="small" />
+            <input nz-input name="telefone"
+                   [ngModel]="unidade.telefone" (ngModelChange)="onTelefoneChange($event)"
+                   [attr.disabled]="readonly ? true : null"
+                   placeholder="(XX) XXXXX-XXXX" class="half" maxlength="15" />
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">E-mail</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <input nz-input name="email" [(ngModel)]="unidade.email"
+                 [attr.disabled]="readonly ? true : null"
+                 placeholder="email@dominio.com" type="email" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- Bloco de endereço com busca por CEP -->
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">CEP</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <nz-input-group [nzSuffix]="cepSuffix" style="max-width:160px">
+            <input nz-input name="cep"
+                   [ngModel]="unidade.cep" (ngModelChange)="onCepChange($event)"
+                   [attr.disabled]="readonly ? true : null"
+                   placeholder="XXXXX-XXX" maxlength="9" />
+          </nz-input-group>
+          <ng-template #cepSuffix>
+            <span nz-icon [nzType]="buscandoCep ? 'loading' : 'search'"
+                  [nzSpin]="buscandoCep"
+                  style="color:#aaa;cursor:default"></span>
+          </ng-template>
+          <div *ngIf="!readonly" style="font-size:11px;color:#888;margin-top:2px">
+            Digite o CEP para preencher o endereço automaticamente
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-spin [nzSpinning]="buscandoCep" nzSize="small">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24">Logradouro</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <input nz-input name="logradouro" [(ngModel)]="unidade.logradouro"
+                   [attr.disabled]="readonly ? true : null"
+                   placeholder="Rua, Avenida, etc." />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24">Número / Complemento</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <div class="grid-pair">
+              <input nz-input name="numero" [(ngModel)]="unidade.numero"
+                     [attr.disabled]="readonly ? true : null"
+                     placeholder="Nº" class="xsmall" />
+              <input nz-input name="complemento" [(ngModel)]="unidade.complemento"
+                     [attr.disabled]="readonly ? true : null"
+                     placeholder="Apto, Sala, Bloco..." class="half" />
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24">Bairro / Cidade / UF</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <div class="grid-pair">
+              <input nz-input name="bairro" [(ngModel)]="unidade.bairro"
+                     [attr.disabled]="readonly ? true : null"
+                     placeholder="Bairro" class="half" />
+              <input nz-input name="cidade" [(ngModel)]="unidade.cidade"
+                     [attr.disabled]="readonly ? true : null"
+                     placeholder="Cidade" class="half" />
+              <input nz-input name="uf" [(ngModel)]="unidade.uf"
+                     [attr.disabled]="readonly ? true : null"
+                     placeholder="UF" class="xsmall" maxlength="2" />
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-spin>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">Texto da Carteirinha <span class="req">*</span></nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <input nz-input name="textoCarteirinha" [(ngModel)]="unidade.textoCarteirinha"
+                 [attr.disabled]="readonly ? true : null"
+                 placeholder="Texto impresso na carteirinha" required />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">Observações <span class="req">*</span></nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <textarea nz-input name="observacoes" [(ngModel)]="unidade.observacoes"
+                    [attr.disabled]="readonly ? true : null"
+                    placeholder="Observações gerais" [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+                    required></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div class="form-actions compact">
+        <button nz-button nzType="default" type="button" (click)="cancelar()">Voltar</button>
+        <button nz-button nzType="primary" [disabled]="saving || readonly" [nzLoading]="saving" type="submit">
+          {{ readonly ? 'OK' : 'Salvar' }}
+        </button>
+      </div>
+    </form>
+  </nz-spin>
+</nz-card>

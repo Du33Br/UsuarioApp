@@ -1,0 +1,18 @@
+/* estilos mínimos para form de unidade */
+/* estilos do formulário de unidade */
+.unidade-form { padding-top:8px }
+.form-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; align-items:start }
+.grid-pair { display:flex; gap:12px; align-items:center }
+.grid-pair .half { flex:1 }
+.grid-pair .small { max-width:160px }
+.grid-pair .xsmall { max-width:120px }
+.unidade-form nz-form-item { margin-bottom:8px }
+.unidade-form nz-form-label { font-weight:600 }
+.form-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:8px }
+.form-actions.compact { margin-top:6px }
+.req { color: #ff4d4f; margin-left: 2px; }
+
+@media (max-width: 720px) {
+	.grid-pair { flex-wrap: wrap }
+	.grid-pair .half, .grid-pair .small, .grid-pair .xsmall { max-width:100%; flex: 1 1 100% }
+}

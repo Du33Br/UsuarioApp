@@ -24,18 +24,20 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
           <div class="user-role">{{userRole}}</div>
         </div>
       </div>
-      <ul nz-menu nzMode="inline" [nzInlineCollapsed]="collapsed">
-        <li nz-menu-item routerLink="/dashboard">
+        <ul nz-menu nzMode="inline" [nzInlineCollapsed]="collapsed">
+        <li nz-menu-item routerLink="/app/dashboard">
           <i nz-icon nzType="home"></i>
-          <span *ngIf="!collapsed">Home</span>
+            <span *ngIf="!collapsed">Início</span>
         </li>
         <li nz-submenu>
           <span title><i nz-icon nzType="setting"></i><span *ngIf="!collapsed">Admin</span></span>
-          <ul>
-            <li nz-menu-item routerLink="/users">Users</li>
-            <li nz-menu-item routerLink="/clients">Clients</li>
-            <li nz-menu-item>Settings</li>
-          </ul>
+            <ul>
+              <li nz-menu-item routerLink="/app/usuario"><i nz-icon nzType="user"></i><span *ngIf="!collapsed">Usuários</span></li>
+              <li nz-menu-item routerLink="/app/logins"><i nz-icon nzType="user"></i><span *ngIf="!collapsed">Gerenciar Logins</span></li>
+              <li nz-menu-item routerLink="/app/unidades"><i nz-icon nzType="bank"></i><span *ngIf="!collapsed">Unidades</span></li>
+              <li nz-menu-item routerLink="/app/clients">Clients</li>
+              <li nz-menu-item>Settings</li>
+            </ul>
         </li>
       </ul>
     </nz-sider>

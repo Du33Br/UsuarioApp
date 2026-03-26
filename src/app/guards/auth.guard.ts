@@ -8,6 +8,14 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
 
   const isAuthenticated = authService.estaAutenticado();
 
+  // debug: log token state and requested URL (ver no console do navegador)
+  try {
+    // eslint-disable-next-line no-console
+    // debug log removed
+  } catch (e) {
+    // ignore
+  }
+
   if (isAuthenticated) {
     return true;
   }

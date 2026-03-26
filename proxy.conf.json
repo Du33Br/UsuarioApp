@@ -1,0 +1,11 @@
+{
+  "/api": {
+    "target": "http://controlesusuario-api.sa-east-1.elasticbeanstalk.com",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": "/api"
+    },
+    "logLevel": "debug"
+  }
+}

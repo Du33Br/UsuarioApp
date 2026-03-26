@@ -6,7 +6,8 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import {
   HomeOutline,
@@ -16,6 +17,7 @@ import {
   MenuFoldOutline,
   UserOutline
 } from '@ant-design/icons-angular/icons';
+import { PlusOutline, PlusCircleOutline, PlusSquareOutline, UserAddOutline } from '@ant-design/icons-angular/icons';
 
 registerLocaleData(en);
 
@@ -26,6 +28,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(BrowserAnimationsModule, HttpClientModule),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: NZ_I18N, useValue: en_US },
-    { provide: NZ_ICONS, useValue: [HomeOutline, SettingOutline, BellOutline, LogoutOutline, MenuFoldOutline, UserOutline] }
+    { provide: NZ_ICONS, useValue: [HomeOutline, SettingOutline, BellOutline, LogoutOutline, MenuFoldOutline, UserOutline, PlusOutline, PlusCircleOutline, PlusSquareOutline, UserAddOutline] }
   ]
 };

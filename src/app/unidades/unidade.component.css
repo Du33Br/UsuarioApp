@@ -1,0 +1,3 @@
+/* estilos mínimos para UnidadeComponent */
+:host ::ng-deep .ant-table { width: 100%; }
+

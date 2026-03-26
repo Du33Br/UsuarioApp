@@ -1,0 +1,77 @@
+<div class="dashboard">
+  <app-page-title title="Painel - Contabilidade" subtitle="Visão geral financeira"></app-page-title>
+
+  <div class="kpis">
+    <nz-card class="kpi" nzBordered>
+      <div class="kpi-label">Receita (Mês)</div>
+      <div class="kpi-value">R$ 124.560</div>
+      <div class="kpi-sub">+8.4% vs mês anterior</div>
+    </nz-card>
+
+    <nz-card class="kpi" nzBordered>
+      <div class="kpi-label">Despesas (Mês)</div>
+      <div class="kpi-value danger">R$ 76.230</div>
+      <div class="kpi-sub">-4.1% vs mês anterior</div>
+    </nz-card>
+
+    <nz-card class="kpi" nzBordered>
+      <div class="kpi-label">Lucro</div>
+      <div class="kpi-value">R$ 48.330</div>
+      <div class="kpi-sub">Margem 38.8%</div>
+    </nz-card>
+
+    <nz-card class="kpi" nzBordered>
+      <div class="kpi-label">Clientes Ativos</div>
+      <div class="kpi-value">342</div>
+      <div class="kpi-sub">+12 novos / mês</div>
+    </nz-card>
+  </div>
+
+  <div class="mid-row">
+    <nz-card class="chart-card" nzTitle="Fluxo de Caixa (últimos 7 dias)">
+      <div class="bars">
+        <div *ngFor="let b of cashflow" class="bar-wrap">
+          <div class="bar" [style.height.%]="b"></div>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="table-card" nzTitle="Últimas faturas">
+      <nz-table [nzData]="displayInvoices" nzSize="small">
+        <thead>
+          <tr><th>ID</th><th>Cliente</th><th>Valor</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let i of displayInvoices">
+            <td>{{i.id}}</td>
+            <td>{{i.client}}</td>
+            <td>R$ {{i.value | number:'1.2-2'}}</td>
+            <td>
+              <nz-tag [nzColor]="i.status === 'paid' ? 'green' : (i.status === 'overdue' ? 'red' : 'orange')">{{i.status}}</nz-tag>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+        <div>Exibindo {{displayInvoices.length}} de {{invoices.length}} registros</div>
+        <nz-pagination
+          [nzPageIndex]="pageIndex"
+          [nzTotal]="invoices.length"
+          [nzPageSize]="pageSize"
+          [nzPageSizeOptions]="pageSizeOptions"
+          [nzShowSizeChanger]="true"
+          (nzPageIndexChange)="onPageIndexChange($event)"
+          (nzPageSizeChange)="onPageSizeChange($event)">
+        </nz-pagination>
+      </div>
+    </nz-card>
+  </div>
+
+  <div class="bottom-row">
+    <nz-card nzTitle="Atividades recentes">
+      <ul class="activities">
+        <li *ngFor="let a of activities">{{a}}</li>
+      </ul>
+    </nz-card>
+  </div>
+</div>

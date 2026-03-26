@@ -36,7 +36,7 @@ export class SampleFormComponent {
   model: any = { name: '', email: '' };
 
   submit() {
-    console.log('Form submitted', this.model);
+    // removed debug log
     alert('Dados salvos (exemplo)');
   }
 }

@@ -1,0 +1,33 @@
+<nz-card>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h2 style="margin:0">Unidades</h2>
+    <div>
+      <button nz-button nzType="primary" (click)="novo()"><i nz-icon nzType="plus"></i>&nbsp;Cadastrar</button>
+    </div>
+  </div>
+
+  <nz-table [nzData]="unidades" [nzLoading]="loading" nzBordered>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>CNPJ</th>
+        <th>Endereço</th>
+        <th>Telefone</th>
+        <th style="width:140px">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let u of unidades">
+        <td>{{ u.nome || '—' }}</td>
+        <td>{{ u.cnpj || '—' }}</td>
+        <td>{{ formatarEndereco(u) }}</td>
+        <td>{{ u.telefone || '—' }}</td>
+        <td class="actions-cell">
+          <button nz-button nzType="default" nzSize="small" nz-tooltip nzTitle="Ver" (click)="view(u)"><i nz-icon nzType="eye"></i></button>
+          <button nz-button nzType="primary" nzSize="small" nz-tooltip nzTitle="Editar" (click)="editar(u)" style="margin-left:6px"><i nz-icon nzType="edit"></i></button>
+          <button nz-button nzType="default" nzSize="small" nz-tooltip nzTitle="Excluir" style="margin-left:6px" (click)="confirmDelete(u)"><i nz-icon nzType="delete"></i></button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

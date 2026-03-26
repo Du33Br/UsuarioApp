@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, shareReplay, tap } from 'rxjs/operators';
-import { Usuario, Unidade, UsuarioListResponse } from '../usuario/novo/usuario.model';
-import { LoadingService } from './loading.service';
-import { environment } from '../../environments/environment';
+import { Usuario, Unidade, UsuarioListResponse } from './usuario/novo/usuario.model';
+import { LoadingService } from './services/loading.service';
+import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
@@ -113,34 +113,12 @@ export class UsuarioService {
 
 }
 
-
-
-// Ajuste: estender o DTO com campos do Swagger de sistema de usuários
 function mapUsuarioToApiDto(u: any) {
-  const base = {
+  // Mapeamento conservador: usa campos do form quando disponíveis e preenche defaults
+  return {
     Id: u.id ?? undefined,
     Nome: u.nome || '',
-    Apelido: u.apelido || '',
-    Senha: u.senha || null,
-    TipoAcesso: u.tipoAcesso ?? null,
-    Status: u.status || '',
-    DataCadastro: u.dataCadastro || null,
-    HoraCadastro: u.horaCadastro || null,
-    Gestor: !!u.gestor,
-    Gestao: !!u.gestao,
-    Atendimentos: !!u.atendimentos,
-    NucleoEducacional: !!u.nucleoEducacional,
-    NucleoEsportivo: !!u.nucleoEsportivo,
-    IdAnalista: u.idAnalista ?? null,
-    NucleoCultura: !!u.nucleoCultura,
-    Observacoes: u.observacoes || '',
-    Analista: u.analista || '',
-    SistemaMovimentos: u.sistemaMovimentos || [],
-    UsuarioSistemas: u.usuarioSistemas || []
-  };
-
-  // mesclar com campos já mapeados (endereço, contatos, etc.)
-  return Object.assign({}, base, {
+    NomeSocial: u.nomeSocial || '',
     Rg: u.rg || '',
     UF: u.uf || '',
     CEP: u.cep || '',
@@ -165,8 +143,11 @@ function mapUsuarioToApiDto(u: any) {
     NaturalidadeUf: u.naturalidadeUf || '',
     NecessidadesEspeciais: u.necessidadesEspeciais || '',
     LogradouroNumero: u.numero || '',
+    // unidade mapping
     IdUnidade: (u.unidadeId !== undefined && u.unidadeId !== null) ? Number(u.unidadeId) : undefined,
-    Unidade: (u.unidade && (u.unidade.nome || u.unidade)) ? (u.unidade.nome || u.unidade) : (u.unidadeNome || '')
-  });
+    Unidade: (u.unidade && (u.unidade.nome || u.unidade)) ? (u.unidade.nome || u.unidade) : (u.unidadeNome || ''),
+    // campos adicionais que backend pode esperar
+    SexoId: u.sexoId || null,
+    DataNascimento: u.dataNascimento || null
+  };
 }
-

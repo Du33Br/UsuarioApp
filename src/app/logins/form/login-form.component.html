@@ -1,0 +1,57 @@
+<div class="login-form-root">
+  <div class="login-card">
+    <nz-card nzTitle="Meu Perfil / Login">
+
+      <nz-skeleton [nzActive]="true" *ngIf="loading(); else formTpl"></nz-skeleton>
+
+      <ng-template #formTpl>
+        <form [formGroup]="form" (ngSubmit)="salvar()">
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24">Login</nz-form-label>
+            <nz-form-control [nzSpan]="24">
+              <input nz-input formControlName="user" placeholder="nome do login" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired>Senha</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="A senha é obrigatória">
+              <input nz-input type="password" formControlName="password" autocomplete="new-password" placeholder="••••••••" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24">Unidade</nz-form-label>
+            <nz-form-control [nzSpan]="24">
+              <nz-select
+                formControlName="idUnidade"
+                nzPlaceHolder="— selecione —"
+                nzShowSearch
+                nzAllowClear
+                [nzLoading]="carregandoUnidades"
+                nzNotFoundContent="Nenhuma unidade encontrada"
+                class="full-width">
+                <nz-option
+                  *ngFor="let u of unidades"
+                  [nzValue]="u.id"
+                  [nzLabel]="labelUnidade(u)">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <div *ngIf="erro" class="error-msg">{{ erro }}</div>
+
+          <div class="actions">
+            <button nz-button nzType="default" type="button" (click)="voltar()">Cancelar</button>
+            <button nz-button nzType="primary" type="submit" [disabled]="form.invalid || salvando()">
+              {{ salvando() ? 'Salvando…' : 'Salvar' }}
+            </button>
+          </div>
+        </form>
+      </ng-template>
+
+    </nz-card>
+  </div>
+</div>

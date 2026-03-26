@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from './services/auth.service';
 import { CommonModule } from '@angular/common';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -11,11 +13,14 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   template: `
     <nz-header class="app-header">
       <div class="brand">
-        <img src="/public/favicon.ico" alt="logo" class="logo" />
+        <img src="/favicon.ico" alt="logo" class="logo" />
         <span class="title">Meu App</span>
       </div>
       <div class="actions">
         <button nz-button nzType="text" aria-label="notifications"><i nz-icon nzType="bell"></i></button>
+        <button nz-button nzType="default" (click)="editProfile()" title="Editar perfil"><i nz-icon nzType="user"></i></button>
+        <!-- 'Novo Usuário' removido do header -->
+        <!-- 'Novo Login' removido do header -->
         <a class="logout-corner logout-link" href="/login" aria-label="logout"><i nz-icon nzType="logout"></i></a>
       </div>
     </nz-header>
@@ -40,4 +45,18 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     `@media (max-width:720px){ .app-header{padding:0 10px} .app-header .logo{height:28px} .app-header .title{font-size:1rem} .app-header .ant-btn{padding:4px 6px} .logout-corner{width:40px;height:40px;margin-left:8px} .logout-link{display:none} }`
   ]
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  constructor(private router: Router, private auth: AuthService) {}
+  
+  // newUser/newLogin removed from header (buttons removed from template)
+
+  editProfile() {
+    const usuario = this.auth.obterUsuario();
+    if (usuario && (usuario as any).id) {
+      // Navegar para o perfil do Login (não do Usuario) para evitar 404
+      this.router.navigate(['/app', 'perfil', (usuario as any).id]);
+      return;
+    }
+    this.router.navigate(['/app', 'perfil']);
+  }
+}

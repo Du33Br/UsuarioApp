@@ -1,0 +1,4 @@
+.usuario-page { padding: 16px }
+.usuario-page .header { display:flex;justify-content:space-between;align-items:center;margin-bottom:12px }
+.usuario-page .header h2{margin:0}
+.usuario-page .pager { margin-top:12px }

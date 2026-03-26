@@ -32,12 +32,12 @@ import { takeUntil } from 'rxjs/operators';
 
         <form [formGroup]="loginForm" (ngSubmit)="login()">
           <div class="form-group">
-            <label for="username">Usuário</label>
+            <label for="username">Login</label>
             <input
               id="username"
               type="text"
               formControlName="username"
-              placeholder="Digite seu usuário"
+              placeholder="Digite seu login"
               [disabled]="isLoading"
               class="form-input"
             />
@@ -244,6 +244,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         next: () => {
           this.isLoading = false;
           this.message.success('Autenticação realizada com sucesso!');
+          const usuario = this.authService.obterUsuario();
+          const hasUnidade = !!(usuario && (usuario.idUnidade || (usuario as any).unidade));
+          if (!hasUnidade) {
+            this.message.info('Nenhuma unidade vinculada. Redirecionando para cadastro/associação de unidade.');
+            this.router.navigateByUrl('/app/usuario/novo');
+            return;
+          }
           this.router.navigateByUrl(this.returnUrl);
         },
         error: (err) => {
@@ -273,5 +280,3 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 }
-
-

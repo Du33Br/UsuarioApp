@@ -1,0 +1,17 @@
+.dashboard{padding:8px 4px}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.kpi{flex:1;min-width:200px;padding:12px}
+.kpi-label{color:rgba(0,0,0,0.45);font-size:0.9rem}
+.kpi-value{font-size:1.4rem;font-weight:700;margin-top:6px}
+.kpi-value.danger{color:#d32029}
+.kpi-sub{color:rgba(0,0,0,0.45);margin-top:6px}
+.mid-row{display:flex;gap:12px;flex-wrap:wrap}
+.chart-card{flex:1;min-width:280px}
+.table-card{flex:1.2;min-width:320px}
+.bars{display:flex;align-items:flex-end;height:120px;gap:8px;padding:8px 0}
+.bar-wrap{flex:1;display:flex;align-items:flex-end}
+.bar{width:100%;background:linear-gradient(180deg,var(--primary-color),var(--primary-light));border-radius:4px}
+.activities{margin:0;padding-left:16px}
+::ng-deep .table-card .ant-table-pagination { display: none !important; }
+::ng-deep .table-card .ant-pagination.ant-table-pagination { display: none !important; }
+@media (max-width:720px){ .kpis{flex-direction:column} .mid-row{flex-direction:column} .logout-link{display:none} }
