@@ -10,7 +10,7 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { Router } from '@angular/router';
 import { UserStateService } from '../state/user-state.service';
 import { AuthService } from '../services/auth.service';
-import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
+import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
@@ -30,19 +30,21 @@ interface User {
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzTableModule, NzButtonModule, NzTagModule, NzInputModule, NzIconModule, NzPaginationModule, NzPageHeaderModule, NzBadgeModule, NzToolTipModule],
+  imports: [CommonModule, FormsModule, NzTableModule, NzButtonModule, NzTagModule, NzInputModule, NzIconModule, NzPaginationModule, NzCardModule, NzBadgeModule, NzToolTipModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="users-page" style="padding:16px">
-      <nz-page-header nzTitle="Gestão de Usuários" [nzGhost]="false">
-        <ng-template #nzExtra>
-          <nz-input-group nzSuffixIcon="search" style="width:360px; margin-right:12px">
-            <input nz-input placeholder="Pesquisar por login ou unidade" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" />
-          </nz-input-group>
-          <button *ngIf="!isLogins()" nz-button nzType="primary" (click)="newUsuario()"><i nz-icon nzType="plus"></i>&nbsp;Usuários</button>
-          <button *ngIf="isLogins()" nz-button nzType="primary" (click)="newLogin()"><i nz-icon nzType="plus"></i>&nbsp;Novo Login</button>
-        </ng-template>
-      </nz-page-header>
+      <nz-card>
+        <div class="page-topbar">
+          <h2 class="page-title">{{ isLogins() ? 'Gerenciar Logins' : 'Gestão de Usuários' }}</h2>
+          <div class="topbar-actions">
+            <nz-input-group nzSuffixIcon="search" class="search-input">
+              <input nz-input [placeholder]="isLogins() ? 'Pesquisar por login ou unidade' : 'Pesquisar por nome, CPF ou unidade'" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" />
+            </nz-input-group>
+            <button *ngIf="!isLogins()" nz-button nzType="primary" (click)="newUsuario()"><i nz-icon nzType="plus"></i>&nbsp;Usuários</button>
+            <button *ngIf="isLogins()" nz-button nzType="primary" (click)="newLogin()"><i nz-icon nzType="plus"></i>&nbsp;Novo Login</button>
+          </div>
+        </div>
 
       <nz-table nzBordered nzSize="small" [nzData]="displayData" [nzLoading]="isLogins() && userState.loading()">
         <!-- Colunas de Logins -->
@@ -103,7 +105,7 @@ interface User {
         </tbody>
       </nz-table>
 
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+      <div class="table-footer">
         <div>Exibindo {{displayData.length}} de {{filteredData.length}} registros</div>
         <nz-pagination
           [nzPageIndex]="pageIndex"
@@ -115,10 +117,17 @@ interface User {
           (nzPageSizeChange)="onPageSizeChange($event)">
         </nz-pagination>
       </div>
+      </nz-card>
     </div>
   `,
   styles: [
+    `.users-page .page-topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}`,
+    `.users-page .page-title{margin:0}`,
+    `.users-page .topbar-actions{display:flex;align-items:center;gap:12px}`,
+    `.users-page .search-input{width:360px}`,
+    `.users-page .table-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px}`,
     `.users-page .actions-cell{white-space:nowrap;display:flex;gap:6px;justify-content:flex-end;align-items:center}`,
+    `@media (max-width: 920px){ .users-page .page-topbar{flex-direction:column;align-items:stretch} .users-page .topbar-actions{flex-direction:column;align-items:stretch} .users-page .search-input{width:100%} .users-page .table-footer{flex-direction:column;align-items:flex-start;gap:8px} }`,
     `@media (max-width: 720px){ .users-page table, .users-page thead, .users-page tbody, .users-page th, .users-page td, .users-page tr { display:block } .users-page thead{display:none} .users-page tr{margin-bottom:12px} .users-page td{padding:8px 0} }`,
     `/* Hide any internal table pagination so only our external pagination is visible */`,
     `::ng-deep .users-page .ant-table-pagination { display: none !important; }`,
